@@ -2,6 +2,65 @@ const std = @import("std");
 const expect = std.testing.expect;
 const GeneralPurposeAllocator = std.heap.GeneralPurposeAllocator;
 const utils = @import("./utils.zig");
+const bench = @import("./bench.zig");
+
+fn Bitset(comptime S: usize) type {
+    return [S + 1]u1;
+}
+
+fn helper(set: []u1, inp: []const u32, depth: u8, exp: u32) ?u64 {
+    if (depth == 1) {
+        if (set[exp] == 1) {
+            return exp;
+        } else {
+            return null;
+        }
+    }
+
+    for (inp) |val| {
+        if (val > exp) {
+            continue;
+        }
+        set[val] = 1;
+
+        if (helper(set, inp, depth - 1, exp - val)) |found| {
+            return val * found;
+        }
+    }
+    return null;
+}
+
+fn genOptimized(inp: []const u32, depth: u8, comptime S: u32) ?u64 {
+    var set: Bitset(S) = undefined;
+    std.mem.set(u1, &set, 0);
+
+    if (helper(&set, inp, depth, S)) |result| {
+        return result;
+    }
+    return null;
+}
+
+// Per brad's advice
+fn optimized(inp: []const u32) ?u64 {
+    // I think this is the way to zero initialize?
+    var set: Bitset(2020) = undefined;
+    std.mem.set(u1, &set, 0);
+
+    for (inp) |val| {
+        if (val > set.len) {
+            continue;
+        }
+        set[val] = 1;
+
+        const diff = 2020 - val;
+        if (set[diff] == 1) {
+            std.debug.print("Found {}\n", .{diff});
+            return val * diff;
+        }
+    }
+
+    return null;
+}
 
 fn genericized(inp: []const u32, depth: u8, exp: u32) ?u64 {
     if (depth == 1) {
@@ -44,14 +103,25 @@ pub fn main() anyerror!void {
     });
     defer allocator.free(file_path);
 
-    // var inp = try utils.readLinesToU32(allocator, file_path);
+
     var inp = try utils.transformLines(u32, allocator, file_path, parseU32);
     defer inp.deinit();
 
     std.debug.print("Day 1:\n", .{});
-    std.debug.print("\tDepth 2: {}\n", .{genericized(inp.items, 2, 2020)});
-    std.debug.print("\tDepth 3: {}\n", .{genericized(inp.items, 3, 2020)});
-    std.debug.print("\tDepth 4: {}\n", .{genericized(inp.items, 4, 2020)});
+    std.debug.print("\tDepth 2: {}\n", .{optimized(inp.items, 2, 2020)});
+    std.debug.print("\tDepth 3: {}\n", .{optimized(inp.items, 3, 2020)});
+    std.debug.print("\tDepth 4: {}\n", .{optimized(inp.items, 4, 2020)});
+
+    // try bench.writeBench("old solution, depth: 2", genericized, .{inp.items, 2, 2020});    
+    // try bench.writeBench("old solution, depth: 3", genericized, .{inp.items, 3, 2020});    
+    // try bench.writeBench("old solution, depth: 4", genericized, .{inp.items, 4, 2020});    
+    // try bench.writeBench("bitset solution, depth: 2", genOptimized, .{inp.items, 2, 2020});
+    // try bench.writeBench("bitset solution, depth: 3", genOptimized, .{inp.items, 3, 2020});
+    // try bench.writeBench("bitset solution, depth: 4", genOptimized, .{inp.items, 4, 2020});
+}
+
+fn blumpf() void {
+    std.debug.print("aa\n", .{});
 }
 
 test "oooh" {
@@ -69,12 +139,19 @@ test "oooh" {
 
 test "example input" {
     const arr = [_]u32{ 1721, 979, 366, 299, 675, 1456 };
+    expect(optimized(&arr).? == 514579);
+    expect(genOptimized(&arr, 2, 2020).? == 514579);
+    expect(genOptimized(&arr, 3, 2020).? == 241861950);
     expect(genericized(&arr, 2, 2020).? == 514579);
     expect(genericized(&arr, 3, 2020).? == 241861950);
 }
 
 test "trivial fail" {
     const arr = [_]u32{ 0, 1, 2, 3, 4 };
+    expect(optimized(&arr) == null);
+    expect(genOptimized(&arr, 2, 2020) == null);
+    expect(genOptimized(&arr, 3, 2020) == null);
+    expect(genOptimized(&arr, 4, 2020) == null);
     expect(genericized(&arr, 2, 2020) == null);
     expect(genericized(&arr, 3, 2020) == null);
     expect(genericized(&arr, 4, 2020) == null);
@@ -82,6 +159,9 @@ test "trivial fail" {
 
 test "trivial success" {
     const arr = [_]u32{ 1, 2, 2017, 2019 };
+    expect(optimized(&arr).? == 2019);
+    expect(genOptimized(&arr, 2, 2020).? == 2019);
+    expect(genOptimized(&arr, 3, 2020).? == 4034);
     expect(genericized(&arr, 2, 2020).? == 2019);
     expect(genericized(&arr, 3, 2020).? == 4034);
 }
