@@ -27,13 +27,13 @@ pub fn build(b: *Builder) anyerror!void {
     var to_build = BuildVec.init(b.allocator);
     defer to_build.deinit();
 
-    const sources = [_][2][]const u8 {
-        [_][]const u8{"src/day1.zig", "day1"},
-        [_][]const u8{"src/day2.zig", "day2"},
+    const sources = [_][3][]const u8 {
+        .{"src/day1.zig", "day1", "inputs/day1.txt"},
+        .{"src/day2.zig", "day2", "inputs/day2.txt"},
+        .{"src/day3.zig", "day3", "inputs/day3.txt"},
     };
 
     for (sources) |item| {
-        std.debug.print("{} {}\n", .{item[0], item[1]});
         const exe = b.addExecutable(item[1], item[0]);
         exe.setTarget(target);
         exe.setBuildMode(mode);
@@ -43,10 +43,9 @@ pub fn build(b: *Builder) anyerror!void {
         test_step.dependOn(&test_exe.step);
 
         const run_cmd = exe.run();
+        const args = [_][]const u8{item[2]};
         run_cmd.step.dependOn(b.getInstallStep());
-        if (b.args) |args| {
-            run_cmd.addArgs(args);
-        }
+        run_cmd.addArgs(&args);
 
         run_step.dependOn(&run_cmd.step);
     }
