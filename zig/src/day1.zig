@@ -40,28 +40,6 @@ fn genOptimized(inp: []const u32, depth: u8, comptime S: u32) ?u64 {
     return null;
 }
 
-// Per brad's advice
-fn optimized(inp: []const u32) ?u64 {
-    // I think this is the way to zero initialize?
-    var set: Bitset(2020) = undefined;
-    std.mem.set(u1, &set, 0);
-
-    for (inp) |val| {
-        if (val > set.len) {
-            continue;
-        }
-        set[val] = 1;
-
-        const diff = 2020 - val;
-        if (set[diff] == 1) {
-            std.debug.print("Found {}\n", .{diff});
-            return val * diff;
-        }
-    }
-
-    return null;
-}
-
 fn genericized(inp: []const u32, depth: u8, exp: u32) ?u64 {
     if (depth == 1) {
         if (std.mem.indexOfScalar(u32, inp, exp)) |found_idx| {
@@ -108,9 +86,9 @@ pub fn main() anyerror!void {
     defer inp.deinit();
 
     std.debug.print("Day 1:\n", .{});
-    std.debug.print("\tDepth 2: {}\n", .{optimized(inp.items, 2, 2020)});
-    std.debug.print("\tDepth 3: {}\n", .{optimized(inp.items, 3, 2020)});
-    std.debug.print("\tDepth 4: {}\n", .{optimized(inp.items, 4, 2020)});
+    std.debug.print("\tDepth 2: {}\n", .{genOptimized(inp.items, 2, 2020)});
+    std.debug.print("\tDepth 3: {}\n", .{genOptimized(inp.items, 3, 2020)});
+    std.debug.print("\tDepth 4: {}\n", .{genOptimized(inp.items, 4, 2020)});
 
     // try bench.writeBench("old solution, depth: 2", genericized, .{inp.items, 2, 2020});    
     // try bench.writeBench("old solution, depth: 3", genericized, .{inp.items, 3, 2020});    
