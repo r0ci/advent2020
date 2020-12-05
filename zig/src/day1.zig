@@ -117,7 +117,6 @@ test "oooh" {
 
 test "example input" {
     const arr = [_]u32{ 1721, 979, 366, 299, 675, 1456 };
-    expect(optimized(&arr).? == 514579);
     expect(genOptimized(&arr, 2, 2020).? == 514579);
     expect(genOptimized(&arr, 3, 2020).? == 241861950);
     expect(genericized(&arr, 2, 2020).? == 514579);
@@ -126,7 +125,6 @@ test "example input" {
 
 test "trivial fail" {
     const arr = [_]u32{ 0, 1, 2, 3, 4 };
-    expect(optimized(&arr) == null);
     expect(genOptimized(&arr, 2, 2020) == null);
     expect(genOptimized(&arr, 3, 2020) == null);
     expect(genOptimized(&arr, 4, 2020) == null);
@@ -137,7 +135,6 @@ test "trivial fail" {
 
 test "trivial success" {
     const arr = [_]u32{ 1, 2, 2017, 2019 };
-    expect(optimized(&arr).? == 2019);
     expect(genOptimized(&arr, 2, 2020).? == 2019);
     expect(genOptimized(&arr, 3, 2020).? == 4034);
     expect(genericized(&arr, 2, 2020).? == 2019);
