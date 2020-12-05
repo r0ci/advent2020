@@ -6,7 +6,7 @@ const GeneralPurposeAllocator = std.heap.GeneralPurposeAllocator;
 
 fn readFile(allocator: *std.mem.Allocator, path: []const u8) ![]const u8 {
     var line_buf: [2048]u8 = undefined;
-    var f = try fs.cwd().openFile(path, .{.read=true, .write=false, .lock=fs.File.Lock.None});
+    var f = try fs.cwd().openFile(path, .{ .read = true, .write = false, .lock = fs.File.Lock.None });
     defer f.close();
     const st = try f.stat();
 
@@ -29,8 +29,7 @@ fn processPassportDump(inp: []const u8, strict: bool) !usize {
 }
 
 const ReqKey = struct {
-    name: []const u8,
-    func: fn(val: []const u8) bool
+    name: []const u8, func: fn (val: []const u8) bool
 };
 
 fn validBirthYear(val: []const u8) bool {
@@ -49,8 +48,8 @@ fn validExpirationYear(val: []const u8) bool {
 }
 
 fn validHeight(val: []const u8) bool {
-    const unit = val[val.len-2..];
-    const num = std.fmt.parseInt(u8, val[0..val.len-2], 10) catch return false;
+    const unit = val[val.len - 2 ..];
+    const num = std.fmt.parseInt(u8, val[0 .. val.len - 2], 10) catch return false;
     if (std.mem.eql(u8, "in", unit)) {
         return (num >= 59 and num <= 76);
     } else if (std.mem.eql(u8, "cm", unit)) {
@@ -69,7 +68,7 @@ fn validHairColor(val: []const u8) bool {
 
 fn validEyeColor(val: []const u8) bool {
     const accepted = [_][]const u8{
-        "amb", "blu", "brn", "gry", "grn", "hzl", "oth"
+        "amb", "blu", "brn", "gry", "grn", "hzl", "oth",
     };
     for (accepted) |v| {
         if (std.mem.eql(u8, val, v)) {
@@ -88,13 +87,13 @@ fn validPassportID(val: []const u8) bool {
 }
 
 const req_keys = [_]ReqKey{
-    .{.name = "byr", .func = validBirthYear},
-    .{.name = "iyr", .func = validIssueYear},
-    .{.name = "eyr", .func = validExpirationYear},
-    .{.name = "hgt", .func = validHeight},
-    .{.name = "hcl", .func = validHairColor},
-    .{.name = "ecl", .func = validEyeColor},
-    .{.name = "pid", .func = validPassportID},
+    .{ .name = "byr", .func = validBirthYear },
+    .{ .name = "iyr", .func = validIssueYear },
+    .{ .name = "eyr", .func = validExpirationYear },
+    .{ .name = "hgt", .func = validHeight },
+    .{ .name = "hcl", .func = validHairColor },
+    .{ .name = "ecl", .func = validEyeColor },
+    .{ .name = "pid", .func = validPassportID },
 };
 
 fn validatePassport(passport: []const u8, strict: bool) bool {
@@ -115,8 +114,7 @@ fn validatePassport(passport: []const u8, strict: bool) bool {
                     if (!strict or req_keys[i].func(val)) {
                         found[i] = true;
                         break;
-                    } else {
-                    }
+                    } else {}
                 }
             }
         }
@@ -130,7 +128,7 @@ pub fn main() anyerror!void {
     const allocator = &gpa.allocator;
 
     var arg_it = std.process.args();
-    
+
     // skip own exe name
     _ = arg_it.skip();
 
@@ -205,14 +203,13 @@ test "example input strict" {
     expect((try processPassportDump(invalid, true)) == 0);
 }
 
-
 test "validate trivial" {
     const inp = "byr:1 iyr:2 eyr:3 hgt:4 hcl:5 ecl:6 pid:7 cid:8";
     expect(validatePassport(inp, false));
 
     const inp2 = "byr:1 iyr:2 eyr:3 hgt:4 hcl:5 ecl:6 pid:7";
     expect(validatePassport(inp2, false));
-    
+
     const inp3 =
         \\byr:1
         \\iyr:2 eyr:3
@@ -222,7 +219,7 @@ test "validate trivial" {
     ;
     expect(validatePassport(inp3, false));
 
-    const inp4 = 
+    const inp4 =
         \\iyr:2 eyr:3
         \\hgt:4
         \\byr:1
@@ -233,7 +230,7 @@ test "validate trivial" {
 }
 
 test "invalid trivial" {
-    const inp = ""; 
+    const inp = "";
     expect(validatePassport(inp, false) == false);
 
     const inp2 = "byr:1 eyr:3 hgt:4 hcl:5 ecl:6 pid:7";
@@ -252,7 +249,7 @@ test "birthyear validation" {
 
     const inp4 = "fail";
     expect(validBirthYear(inp4) == false);
-    
+
     const inp5 = "1800";
     expect(validBirthYear(inp4) == false);
 
@@ -272,7 +269,7 @@ test "issue year validation" {
 
     const inp4 = "fail";
     expect(validIssueYear(inp4) == false);
-    
+
     const inp5 = "1800";
     expect(validIssueYear(inp4) == false);
 
@@ -292,7 +289,7 @@ test "exp year validation" {
 
     const inp4 = "fail";
     expect(validExpirationYear(inp4) == false);
-    
+
     const inp5 = "1800";
     expect(validExpirationYear(inp4) == false);
 
@@ -312,7 +309,7 @@ test "height validation cm" {
 
     const inp4 = "149cm";
     expect(validHeight(inp4) == false);
-    
+
     const inp5 = "194cm";
     expect(validHeight(inp4) == false);
 
@@ -332,7 +329,7 @@ test "height validation in" {
 
     const inp4 = "58in";
     expect(validHeight(inp4) == false);
-    
+
     const inp5 = "77in";
     expect(validHeight(inp4) == false);
 
@@ -352,7 +349,7 @@ test "hair color validation" {
 
     const inp4 = "#fffffff";
     expect(validHairColor(inp4) == false);
-    
+
     const inp5 = "ff00ff";
     expect(validHairColor(inp4) == false);
 
@@ -362,7 +359,7 @@ test "hair color validation" {
 
 test "eye color validation" {
     const accepted = [_][]const u8{
-        "amb", "blu", "brn", "gry", "grn", "hzl", "oth"
+        "amb", "blu", "brn", "gry", "grn", "hzl", "oth",
     };
     for (accepted) |v| {
         expect(validEyeColor(v));
@@ -383,7 +380,7 @@ test "passport id validation" {
 
     const inp4 = "fail";
     expect(validPassportID(inp4) == false);
-    
+
     const inp5 = "1234567890";
     expect(validPassportID(inp5) == false);
 }

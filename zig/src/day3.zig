@@ -8,7 +8,7 @@ const Square = enum(u8) {
     Tree = '#',
 };
 
-const Slope = struct{
+const Slope = struct {
     dx: usize,
     dy: usize,
 };
@@ -33,7 +33,10 @@ const Board = struct {
         var x: usize = 0;
         var y: usize = 0;
         var count: usize = 0;
-        while (y < self.rows.len) : ({y += slope.dy; x += slope.dx;}) {
+        while (y < self.rows.len) : ({
+            y += slope.dy;
+            x += slope.dx;
+        }) {
             if (self.get(x, y) == '#') {
                 count += 1;
             }
@@ -60,7 +63,7 @@ pub fn main() anyerror!void {
     const allocator = &gpa.allocator;
 
     var arg_it = std.process.args();
-    
+
     // skip own exe name
     _ = arg_it.skip();
 
@@ -79,17 +82,17 @@ pub fn main() anyerror!void {
         inp.deinit();
     }
 
-    const board = Board{.rows=inp.items};
+    const board = Board{ .rows = inp.items };
 
     std.debug.print("Day 3:\n", .{});
-    std.debug.print("\tPart One: {}\n", .{board.countCollisions(.{.dx=3, .dy=1})});
+    std.debug.print("\tPart One: {}\n", .{board.countCollisions(.{ .dx = 3, .dy = 1 })});
 
     const slopes = [_]Slope{
-        .{.dx=1, .dy=1},
-        .{.dx=3, .dy=1},
-        .{.dx=5, .dy=1},
-        .{.dx=7, .dy=1},
-        .{.dx=1, .dy=2},
+        .{ .dx = 1, .dy = 1 },
+        .{ .dx = 3, .dy = 1 },
+        .{ .dx = 5, .dy = 1 },
+        .{ .dx = 7, .dy = 1 },
+        .{ .dx = 1, .dy = 2 },
     };
     std.debug.print("\tPart Two: {}\n", .{board.countCollisionsVec(&slopes)});
 }
@@ -109,13 +112,13 @@ test "example input" {
         ".#..#...#.#",
     };
     const slopes = [_]Slope{
-        .{.dx=1, .dy=1},
-        .{.dx=3, .dy=1},
-        .{.dx=5, .dy=1},
-        .{.dx=7, .dy=1},
-        .{.dx=1, .dy=2},
+        .{ .dx = 1, .dy = 1 },
+        .{ .dx = 3, .dy = 1 },
+        .{ .dx = 5, .dy = 1 },
+        .{ .dx = 7, .dy = 1 },
+        .{ .dx = 1, .dy = 2 },
     };
-    const board = Board{.rows = &rows};
-    expect(board.countCollisions(.{.dx=3, .dy=1}) == 7);
+    const board = Board{ .rows = &rows };
+    expect(board.countCollisions(.{ .dx = 3, .dy = 1 }) == 7);
     expect(board.countCollisionsVec(&slopes) == 336);
 }

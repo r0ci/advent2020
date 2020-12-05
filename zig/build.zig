@@ -13,26 +13,24 @@ pub fn build(b: *Builder) anyerror!void {
     // Standard release options allow the person running `zig build` to select
     // between Debug, ReleaseSafe, ReleaseFast, and ReleaseSmall.
     const mode = b.standardReleaseOptions();
-    const BuildItem = struct{
-        exe_name: []const u8,
-        src_name: []const u8
+    const BuildItem = struct {
+        exe_name: []const u8, src_name: []const u8
     };
     const BuildVec = std.ArrayList(BuildItem);
 
-
-    var src_dir = try std.fs.cwd().openDir("src", .{.iterate=true});
+    var src_dir = try std.fs.cwd().openDir("src", .{ .iterate = true });
     defer src_dir.close();
     var it = src_dir.iterate();
 
     var to_build = BuildVec.init(b.allocator);
     defer to_build.deinit();
 
-    const sources = [_][3][]const u8 {
-        .{"src/day1.zig", "day1", "inputs/day1.txt"},
-        .{"src/day2.zig", "day2", "inputs/day2.txt"},
-        .{"src/day3.zig", "day3", "inputs/day3.txt"},
-        .{"src/day4.zig", "day4", "inputs/day4.txt"},
-        .{"src/day5.zig", "day5", "inputs/day5.txt"},
+    const sources = [_][3][]const u8{
+        .{ "src/day1.zig", "day1", "inputs/day1.txt" },
+        .{ "src/day2.zig", "day2", "inputs/day2.txt" },
+        .{ "src/day3.zig", "day3", "inputs/day3.txt" },
+        .{ "src/day4.zig", "day4", "inputs/day4.txt" },
+        .{ "src/day5.zig", "day5", "inputs/day5.txt" },
     };
 
     for (sources) |item| {

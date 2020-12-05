@@ -81,7 +81,6 @@ pub fn main() anyerror!void {
     });
     defer allocator.free(file_path);
 
-
     var inp = try utils.transformLines(u32, allocator, file_path, parseU32);
     defer inp.deinit();
 
@@ -90,9 +89,9 @@ pub fn main() anyerror!void {
     std.debug.print("\tDepth 3: {}\n", .{genOptimized(inp.items, 3, 2020)});
     std.debug.print("\tDepth 4: {}\n", .{genOptimized(inp.items, 4, 2020)});
 
-    // try bench.writeBench("old solution, depth: 2", genericized, .{inp.items, 2, 2020});    
-    // try bench.writeBench("old solution, depth: 3", genericized, .{inp.items, 3, 2020});    
-    // try bench.writeBench("old solution, depth: 4", genericized, .{inp.items, 4, 2020});    
+    // try bench.writeBench("old solution, depth: 2", genericized, .{inp.items, 2, 2020});
+    // try bench.writeBench("old solution, depth: 3", genericized, .{inp.items, 3, 2020});
+    // try bench.writeBench("old solution, depth: 4", genericized, .{inp.items, 4, 2020});
     // try bench.writeBench("bitset solution, depth: 2", genOptimized, .{inp.items, 2, 2020});
     // try bench.writeBench("bitset solution, depth: 3", genOptimized, .{inp.items, 3, 2020});
     // try bench.writeBench("bitset solution, depth: 4", genOptimized, .{inp.items, 4, 2020});

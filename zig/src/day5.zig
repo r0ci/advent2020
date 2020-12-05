@@ -6,17 +6,14 @@ const GeneralPurposeAllocator = std.heap.GeneralPurposeAllocator;
 
 fn readFile(allocator: *std.mem.Allocator, path: []const u8) ![]const u8 {
     var line_buf: [2048]u8 = undefined;
-    var f = try fs.cwd().openFile(path, .{.read=true, .write=false, .lock=fs.File.Lock.None});
+    var f = try fs.cwd().openFile(path, .{ .read = true, .write = false, .lock = fs.File.Lock.None });
     defer f.close();
     const st = try f.stat();
 
     return try f.reader().readAllAlloc(allocator, st.size);
 }
 
-const Error = error{
-    InvalidSymbol,
-    AmbiguousResult
-};
+const Error = error{ InvalidSymbol, AmbiguousResult };
 
 fn getRow(inp: []const u8) !u64 {
     var min: u8 = 0;
@@ -73,7 +70,7 @@ pub fn main() anyerror!void {
     var set = [_]u1{0} ** max_id;
 
     var arg_it = std.process.args();
-    
+
     // skip own exe name
     _ = arg_it.skip();
 
@@ -97,7 +94,7 @@ pub fn main() anyerror!void {
         if (s.len != 10) {
             continue;
         }
-        const id = try getId(s); 
+        const id = try getId(s);
         set[id] = 1;
         max = (if (max > id) max else id);
     }
@@ -105,7 +102,7 @@ pub fn main() anyerror!void {
     // the offset fixed since the original set is zero indexed
     var i: usize = 1;
     while (i < max_id - 1) : (i += 1) {
-        if (set[i] == 0 and set[i-1] == 1 and set[i+1] == 1) {
+        if (set[i] == 0 and set[i - 1] == 1 and set[i + 1] == 1) {
             my_seat = i;
         }
     }
@@ -139,7 +136,6 @@ test "col example input" {
     expect((try getColumn(inp4[7..])) == 4);
 }
 
-
 test "id example input" {
     const inp = "FBFBBFFRLR";
     const inp2 = "BFFFBBFRRR";
@@ -150,4 +146,3 @@ test "id example input" {
     expect((try getId(inp3)) == 119);
     expect((try getId(inp4)) == 820);
 }
-
