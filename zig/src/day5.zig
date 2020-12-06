@@ -107,7 +107,7 @@ pub fn main() anyerror!void {
         }
     }
 
-    std.debug.print("Day 4:\n", .{});
+    std.debug.print("Day 5:\n", .{});
     std.debug.print("\tPart One: {}\n", .{max});
     std.debug.print("\tPart Two: {}\n", .{my_seat});
 }
