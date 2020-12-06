@@ -4,7 +4,6 @@ const GeneralPurposeAllocator = std.heap.GeneralPurposeAllocator;
 const utils = @import("./utils.zig");
 const bench = @import("./bench.zig");
 
-
 fn readFile(allocator: *std.mem.Allocator, path: []const u8) ![]const u8 {
     var f = try std.fs.cwd().openFile(path, .{ .read = true, .write = false, .lock = std.fs.File.Lock.None });
     defer f.close();
@@ -17,7 +16,7 @@ fn readFile(allocator: *std.mem.Allocator, path: []const u8) ![]const u8 {
 fn parseGroupAnyone(group: []const u8) u64 {
     var set = [_]u1{0} ** 26;
     var sum: u64 = 0;
-    
+
     for (group) |byte| {
         if (byte < 'a' or byte > 'z') {
             continue;
@@ -28,14 +27,14 @@ fn parseGroupAnyone(group: []const u8) u64 {
             sum += 1;
         }
     }
-    
+
     return sum;
 }
 
 fn parseGroupEveryone(group: []const u8) u64 {
     var it = std.mem.split(group, "\n");
     var set = [_]u1{1} ** 26;
-    
+
     while (it.next()) |individual| {
         var idv_set = [_]u1{0} ** 26;
         if (individual.len == 0) {
@@ -48,12 +47,12 @@ fn parseGroupEveryone(group: []const u8) u64 {
             const off = byte - 'a';
             idv_set[off] = 1;
         }
-        
+
         for (idv_set) |idv_bit, i| {
             set[i] &= idv_bit;
         }
     }
-    
+
     var sum: u64 = 0;
     for (set) |bit| {
         if (bit == 1) {
@@ -63,7 +62,6 @@ fn parseGroupEveryone(group: []const u8) u64 {
 
     return sum;
 }
-
 
 pub fn main() !void {
     var gpa = GeneralPurposeAllocator(.{}){};
@@ -83,10 +81,10 @@ pub fn main() !void {
         return error.InvalidArgs;
     });
     defer allocator.free(file_path);
-    
+
     const inp = try readFile(allocator, file_path);
     defer allocator.free(inp);
-    
+
     var it = std.mem.split(inp, "\n\n");
 
     var anyone_count: u64 = 0;
