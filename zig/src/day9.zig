@@ -50,7 +50,6 @@ fn partTwo(storage: []const u64, value: u64) ?MinMax {
 
             sum += curr;
             if (sum == value) {
-                std.debug.print("range {} to {}, min {}, max {}\n", .{ i, j, res.min, res.max });
                 return res;
             }
         }

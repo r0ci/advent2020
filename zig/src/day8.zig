@@ -129,7 +129,6 @@ const Machine = struct {
                 op.* = og;
                 self.reset();
             } else {
-                std.debug.print("Run successful, swapped instr {}, acc: {}\n", .{ i, self.accumulator });
                 return i;
             }
         }

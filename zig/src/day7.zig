@@ -71,7 +71,6 @@ const BagGraph = struct {
 
     fn getOrAddBag(self: *BagGraph, name: []const u8) !usize {
         return self.map.get(name) orelse {
-            std.debug.print("Adding bag {}\n", .{name});
             const idx = self.storage.items.len;
             var bag = Bag.init(self.allocator, name);
             errdefer bag.deinit();
@@ -97,7 +96,6 @@ const BagGraph = struct {
             sum += self.dfsContainedByHelper(next_idx);
         }
 
-        std.debug.print("{}: {}\n", .{ bag.name, sum });
         return sum;
     }
 
@@ -112,7 +110,6 @@ const BagGraph = struct {
             sum += self.dfsContainedByHelper(next_idx);
         }
 
-        std.debug.print("{}: {}\n", .{ bag.name, sum });
         return sum;
     }
 
@@ -128,7 +125,6 @@ const BagGraph = struct {
             sum += (self.dfsContainsHelper(c.idx)) * c.count;
         }
 
-        std.debug.print("{} contains: {}\n", .{ bag.name, sum });
         return sum;
     }
 
@@ -141,7 +137,6 @@ const BagGraph = struct {
             sum += self.dfsContainsHelper(c.idx) * c.count;
         }
 
-        std.debug.print("{} contains: {}\n", .{ bag.name, sum });
         return sum;
     }
 
@@ -169,10 +164,8 @@ const BagGraph = struct {
             // If this is a leaf bag we can skip the rest of the line
             if (std.mem.startsWith(u8, second_half, "no other bags")) continue;
 
-            std.debug.print("FIRST: '{}', SECOND: '{}'\n", .{ first_half, second_half });
             var containee_it = std.mem.split(second_half, ", ");
             while (containee_it.next()) |containee_str| {
-                std.debug.print("{}\n", .{containee_str});
                 // each slice will end up with
                 // 'N adj color bag(s)(.)'
                 // where the s and period are optional

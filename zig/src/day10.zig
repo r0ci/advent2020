@@ -103,8 +103,6 @@ pub fn main() !void {
     // const device_jolts = adapters.items[adapters.items.len - 1] + 3;
 
     const diffs = countDiffs(adapters.items);
-    std.debug.print("\n{} {}\n", .{ diffs.one, diffs.three });
-
     var storage = try std.ArrayList(u64).initCapacity(allocator, adapters.items.len);
     storage.appendNTimesAssumeCapacity(0, adapters.items.len);
     defer storage.deinit();
