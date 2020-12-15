@@ -39,6 +39,7 @@ pub fn build(b: *Builder) anyerror!void {
         .{ "src/day11.zig", "day11", "inputs/day11.txt" },
         .{ "src/day12.zig", "day12", "inputs/day12.txt" },
         .{ "src/day13.zig", "day13", "inputs/day13.txt" },
+        .{ "src/day14.zig", "day14", "inputs/day14.txt" },
     };
 
     for (sources) |item| {
